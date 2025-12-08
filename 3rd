@@ -1,0 +1,253 @@
+import React from "react";
+import { Table, Card } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import TableHeaderCell from "./TableHeaderCell";
+import jobHistoryJson from "./jobHistoryJson.json";
+import FailureIcon from "../../assets/svg/FailureIcon";
+import SuccessIcon from "../../assets/svg/SuccessIcon";
+import CustomCheckbox from "../../assets/svg/CustomCheckbox";
+import "./JobHistory.css";
+ 
+interface JobHistoryRecord {
+  key: number;
+  runVersion: number;
+  jobName: string;
+ 
+  fileType: string;
+  tableType: string;
+ 
+  jobStatus: "Success" | "Failed" | "-";
+ 
+  jobStartTime: string;
+  jobEndTime: string;
+ 
+  actionTakenBy: string;     // previously triggeredBy
+  userActionTime: string;
+  actionType: string;
+ 
+  comment: string;
+ 
+  dqDetails: string;
+}
+ 
+const JobHistory: React.FC = () => {
+const columns = [
+  { title: "Run Version", dataIndex: "runVersion", width: 120 },
+ 
+  {
+    title: <TableHeaderCell title="Job Name" />,
+    dataIndex: "jobName",
+    width: 220
+  },
+ 
+  { title: "File Type", dataIndex: "fileType", width: 120 },
+ 
+  { title: "Table Type", dataIndex: "tableType", width: 120 },
+ 
+  {
+    title: "Job Status",
+    dataIndex: "jobStatus",
+    width: 150,
+    render: (status: string) =>
+      status === "Success" ? (
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <SuccessIcon />
+          <span style={{ color: "#198754", fontWeight: 500 }}>Success</span>
+        </span>
+      ) : status === "Failed" ? (
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <FailureIcon />
+          <span style={{ color: "#DC3545", fontWeight: 500 }}>Failed</span>
+        </span>
+      ) : (
+        "-"
+      ),
+  },
+ 
+  {
+    title: "Job Start Time",
+    dataIndex: "jobStartTime",
+    width: 180,
+  },
+ 
+  {
+    title: "Job End Time",
+    dataIndex: "jobEndTime",
+    width: 180,
+  },
+ 
+  {
+    title: "Action Taken By",
+    dataIndex: "actionTakenBy",
+    width: 160,
+  },
+ 
+  {
+    title: "User Action Time",
+    dataIndex: "userActionTime",
+    width: 180,
+  },
+ 
+  {
+    title: "Action Type",
+    dataIndex: "actionType",
+    width: 160,
+  },
+ 
+  {
+    title: "Comment",
+    dataIndex: "comment",
+    width: 260,
+  },
+ 
+  {
+    title: "DQ Details",
+    dataIndex: "dqDetails",
+    width: 120,
+    render: () => <a style={{ color: "#1677ff" }}>View</a>,
+  }
+];
+ 
+ 
+ 
+const data: JobHistoryRecord[] = jobHistoryJson.jobHistory.map((item, i) => ({
+  key: i,
+  ...item,
+  jobStatus: item.jobStatus as "Success" | "Failed" | "-",
+}));
+ 
+ 
+ 
+  return (
+    <div className="jobhistory-outer">
+      <div className="jobhistory-inner">
+        <Card className="jobhistory-card">
+          {/* HEADER */}
+          <div className="jobhistory-header">
+            <ArrowLeftOutlined className="jobhistory-back-icon" />
+            <h2 className="jobhistory-title">Job History</h2>
+          </div>
+ 
+          {/* GRID INFO */}
+          <div className="jobhistory-grid">
+            <p><strong>Job ID:</strong> Job_321</p>
+            <p><strong>Environment:</strong> Prod</p>
+            <p><strong>Line of Business:</strong> QL</p>
+            <p><strong>Date of Valuation:</strong> 202511</p>
+          </div>
+ 
+          {/* TABLE */}
+          <div className="jobhistory-table-wrapper">
+            <Table
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              scroll={{ x: "max-content", y: 520 }}
+            />
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
+ 
+export default JobHistory;
+
+
+
+
+
+
+...
+
+
+{
+  "jobHistory": [
+    {
+      "runVersion": 2,
+      "jobName": "VAL_202402_QL_Step0_R2",
+      "fileType": "RPT",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "jobStartTime": "2025-11-20 12:58:10",
+      "jobEndTime": "2025-11-20 12:59:05",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "-",
+      "actionType": "-",
+      "comment": "-",
+      "dqDetails": "View"
+    },
+    {
+      "runVersion": 2,
+      "jobName": "VAL_202402_QL_Step0_R2",
+      "fileType": "RPT",
+      "tableType": "SILVER",
+      "jobStatus": "Success",
+      "jobStartTime": "2025-11-20 12:58:10",
+      "jobEndTime": "2025-11-20 12:59:05",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "-",
+      "actionType": "-",
+      "comment": "-",
+      "dqDetails": "View"
+    },
+    {
+      "runVersion": 2,
+      "jobName": "VAL_202402_QL_Step0_R2",
+      "fileType": "-",
+      "tableType": "-",
+      "jobStatus": "-",
+      "jobStartTime": "-",
+      "jobEndTime": "-",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "2025-11-20 12:58:10",
+      "actionType": "Rerun",
+      "comment": "Rerun triggered with parameters SILVER,RPT - User comment: File modified",
+      "dqDetails": "View"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "fileType": "CSV",
+      "tableType": "-",
+      "jobStatus": "-",
+      "jobStartTime": "-",
+      "jobEndTime": "-",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "2025-11-20 12:58:10",
+      "actionType": "Approved / Checked",
+      "comment": "File approved as it is good",
+      "dqDetails": "View"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "fileType": "TXT",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "jobStartTime": "2025-11-20 12:57:10",
+      "jobEndTime": "2025-11-20 12:59:05",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "-",
+      "actionType": "-",
+      "comment": "-",
+      "dqDetails": "View"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "fileType": "TXT",
+      "tableType": "SILVER",
+      "jobStatus": "Success",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:59:01",
+      "actionTakenBy": "PSmith",
+      "userActionTime": "-",
+      "actionType": "-",
+      "comment": "-",
+      "dqDetails": "View"
+    }
+  ]
+}
+
+
