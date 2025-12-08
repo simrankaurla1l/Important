@@ -1,0 +1,529 @@
+/* Same base reset */
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  background: #f5f5f5;
+}
+ 
+/* OUTER WRAPPER — identical to rerun-outer */
+.jobhistory-outer {
+  width: 100%;
+  background: #f5f5f5;
+  padding: 24px;
+  box-sizing: border-box;
+ 
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+ 
+/* INNER WRAPPER — identical to rerun-inner */
+.jobhistory-inner {
+  width: 100%;
+  max-width: none;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0;
+}
+ 
+/* CARD — same concept as rerun-card */
+.jobhistory-card {
+  width: 100%;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+ 
+/* HEADER */
+.jobhistory-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+ 
+.jobhistory-back-icon {
+  font-size: 18px;
+  margin-right: 12px;
+  font-weight: bold;
+}
+ 
+.jobhistory-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+ 
+/* GRID */
+.jobhistory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px 12px;
+  margin-bottom: 22px;
+}
+ 
+.jobhistory-grid p {
+  margin: 0;
+}
+ 
+/* TABLE */
+.jobhistory-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+ 
+/* MOBILE */
+@media (max-width: 768px) {
+  .jobhistory-card {
+    padding: 14px;
+  }
+ 
+  .jobhistory-grid {
+    grid-template-columns: 1fr;
+  }
+}
+  JobHistory.css
+
+import React from "react";
+import { Table, Card } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import TableHeaderCell from "./TableHeaderCell";
+import jobHistoryJson from "./jobHistoryJson.json";
+import FailureIcon from "../../assets/svg/FailureIcon";
+import SuccessIcon from "../../assets/svg/SuccessIcon";
+import CustomCheckbox from "../../assets/svg/CustomCheckbox";
+import "./JobHistory.css";
+ 
+interface JobHistoryRecord {
+  key: number;
+  runVersion: number;
+  jobName: string;
+  triggeredBy: string;
+  fileType: string;
+  tableType: string;
+  jobStatus: "Success" | "Failed";
+  dqStatus: string;
+  jobStartTime: string;
+  jobEndTime: string;
+  active: boolean;
+  reported: boolean;
+  approved: boolean;
+  comment: string;
+}
+ 
+const JobHistory: React.FC = () => {
+  const columns = [
+    { title: "Run Version", dataIndex: "runVersion", width: 120 },
+    { title: <TableHeaderCell title="Job Name" />, dataIndex: "jobName", width: 200 },
+    { title: <TableHeaderCell title="Triggered by" />, dataIndex: "triggeredBy", width: 200 },
+    { title: "File Type", dataIndex: "fileType", width: 110 },
+    { title: "Table Type", dataIndex: "tableType", width: 120 },
+    {
+      title: "Job Status",
+      dataIndex: "jobStatus",
+      width: 160,
+      render: (status: string) =>
+        status === "Success" ? (
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <SuccessIcon />
+            <span style={{ color: "#198754", fontWeight: 500 }}>Success</span>
+          </span>
+        ) : (
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <FailureIcon />
+            <span style={{ color: "#DC3545", fontWeight: 500 }}>Failed</span>
+          </span>
+        ),
+    },
+    { title: "DQ Status", dataIndex: "dqStatus", width: 120 },
+    { title: <TableHeaderCell title="Job Start Time" showFilter={false} />, dataIndex: "jobStartTime", width: 180 },
+    { title: <TableHeaderCell title="Job End Time" showFilter={false} />, dataIndex: "jobEndTime", width: 180 },
+    {
+      title: "Active",
+      dataIndex: "active",
+      width: 90,
+      render: (val: boolean) => <CustomCheckbox checked={val} />,
+    },
+    {
+      title: "Reported",
+      dataIndex: "reported",
+      width: 100,
+      render: (val: boolean) => <CustomCheckbox checked={val} />,
+    },
+    {
+      title: "Approved",
+      dataIndex: "approved",
+      width: 100,
+      render: (val: boolean) => <CustomCheckbox checked={val} />,
+    },
+    { title: "Comment", dataIndex: "comment", width: 200 },
+  ];
+ 
+  const data: JobHistoryRecord[] = jobHistoryJson.jobHistory.map((item, i) => ({
+    key: i,
+    ...item,
+    jobStatus: item.jobStatus as "Success" | "Failed",
+  }));
+ 
+  return (
+    <div className="jobhistory-outer">
+      <div className="jobhistory-inner">
+        <Card className="jobhistory-card">
+          {/* HEADER */}
+          <div className="jobhistory-header">
+            <ArrowLeftOutlined className="jobhistory-back-icon" />
+            <h2 className="jobhistory-title">Job History</h2>
+          </div>
+ 
+          {/* GRID INFO */}
+          <div className="jobhistory-grid">
+            <p><strong>Job ID:</strong> Job_321</p>
+            <p><strong>Environment:</strong> Prod</p>
+            <p><strong>Line of Business:</strong> QL</p>
+            <p><strong>Date of Valuation:</strong> 202511</p>
+          </div>
+ 
+          {/* TABLE */}
+          <div className="jobhistory-table-wrapper">
+            <Table
+              columns={columns}
+              dataSource={data}
+              pagination={false}
+              scroll={{ x: "max-content", y: 520 }}
+            />
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+};
+ 
+export default JobHistory;
+ JobHistory.tsx
+
+
+{
+  "jobHistory": [
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R1",
+      "triggeredBy": "System",
+      "fileType": "CSV",
+      "tableType": "GOLD",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:48:10",
+      "jobEndTime": "2025-11-20 12:50:05",
+      "active": true,
+      "reported": true,
+      "approved": true,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 1,
+      "jobName": "VAL_202402_QL_Step0_R2",
+      "triggeredBy": "Philip Dooldis",
+      "fileType": "TXT",
+      "tableType": "SILVER",
+      "jobStatus": "Success",
+      "dqStatus": "Passed",
+      "jobStartTime": "2025-11-20 12:51:32",
+      "jobEndTime": "2025-11-20 12:55:12",
+      "active": false,
+      "reported": false,
+      "approved": false,
+      "comment": "All checks passed"
+    },
+    {
+      "runVersion": 0,
+      "jobName": "VAL_202402_QL_Step0_R3",
+      "triggeredBy": "System",
+      "fileType": "RPT",
+      "tableType": "BRONZE",
+      "jobStatus": "Failed",
+      "dqStatus": "Failed",
+      "jobStartTime": "2025-11-20 12:55:10",
+      "jobEndTime": "2025-11-20 13:01:22",
+      "active": true,
+      "reported": false,
+      "approved": false,
+      "comment": "Job failed due to timeout"
+    }
+  ]
+}
+jobHistoryjson.json
+
+
+import React from "react";
+import DataValidationPopup from "./OpenModalButton";
+import { jsonData } from "./data"; // import the JSON data
+ 
+const SomePage: React.FC = () => {
+  return (
+    <div style={{ padding: "50px" }}>
+   
+      <DataValidationPopup data={jsonData} />
+    </div>
+  );
+};
+ 
+export default SomePage;
+ ReusableModal.tsx
+
+
+// DataValidationPopup.tsx
+import React, { useState } from "react";
+import { Button, Modal, Typography } from "antd";
+ 
+const { Title, Text } = Typography;
+ 
+interface DataValidationPopupProps {
+  data: Record<string, any>;
+}
+ 
+const DataValidationPopup: React.FC<DataValidationPopupProps> = ({ data }) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+ 
+  const showModal = () => setIsModalVisible(true);
+  const handleClose = () => setIsModalVisible(false);
+ 
+  return (
+    <>
+      <Button type="primary" onClick={showModal}>
+        Show Data Validation Report
+      </Button>
+      <Modal
+  title={
+    <div style={{ fontSize: 16,paddingBottom:"4px", fontWeight: 600, margin: 0 }}>
+      Data Validation Report
+    </div>
+  }
+  open={isModalVisible}
+  onCancel={handleClose}
+  footer={null}
+  centered
+  width={800}
+  bodyStyle={{
+    padding: 0,
+    display: "flex",
+    flexDirection: "column",
+    maxHeight: "70vh",
+    overflow: "hidden",
+  }}
+  style={{ padding: 0 }}
+> 
+ 
+        {/* Scrollable container */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            overflowX: "hidden",
+            width: "100%",
+            padding: 0,
+            margin: 0,
+            boxSizing: "border-box",
+            scrollbarWidth: "none", // Firefox invisible scrollbar
+          }}
+          className="scroll-container"
+        >
+       {/* Table header */}
+<div
+  style={{
+    display: "grid",
+    gridTemplateColumns: "200px 1fr",
+    fontWeight: 500,
+    backgroundColor: "#ffffffff", // light gray background
+    position: "sticky",
+    top: 0,
+    zIndex: 1,
+    width: "100%",
+    margin: 0,
+    boxSizing: "border-box",
+    padding: "4px 0", // vertical padding only
+    borderBottom: "1px solid #f0f0f0", // ✅ visible line below header
+  }}
+> 
+ <Text style={{ paddingLeft: 8 }}>Parameter</Text>
+  <Text style={{ paddingLeft: 8 }}>Value</Text>
+</div>
+ 
+ 
+ 
+          {/* Data rows */}
+          {Object.entries(data).map(([key, value]) => (
+            <div
+              key={key}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "200px 1fr",
+                padding: "4px 0",
+                borderBottom: "1px solid #f0f0f0",
+                width: "100%",
+                margin: 0,
+                boxSizing: "border-box",
+              }}
+            >
+              <Text style={{ paddingLeft: 8 }}>{key}</Text>
+              <Text style={{ paddingLeft: 8 }}>
+                {Array.isArray(value) ? value.join(", ") : value.toString()}
+              </Text>
+            </div>
+          ))}
+        </div>
+      </Modal>
+ 
+      {/* Inline CSS to hide scrollbar */}
+      <style>
+        {`
+          .scroll-container::-webkit-scrollbar {
+            width: 0px;
+            background: white; /* invisible */
+          }
+        `}
+      </style>
+    </>
+  );
+};
+ 
+export default DataValidationPopup;
+ OpenModalButton.tsx
+
+
+// data.ts
+export const jsonData = {
+  job_id: "89b3507d-b5e1-4830-ac14-9c6b7d71b85e",
+  job_name: "test_file",
+  job_name_timestamp: "9,750",
+  lob: "OL",
+  dq_no_rules: 5,
+  dq_rules: [
+    "MandatoryColumns_Existence",
+    "KeyFields_NotNull",
+    "Premium_Range",
+    "InterestRate_Range",
+    "SQL_CrossFieldConsistency"
+  ],
+  dq_no_rules_success: 4,
+  dq_rules_success: [
+    "MandatoryColumns_Existence",
+    "KeyFields_NotNull",
+    "InterestRate_Range",
+    "SQL_CrossFieldConsistency"
+  ],
+  dq_no_rules_failed: 1,
+  dq_rules_failed: ["Premium_Range"],
+  dq_success_file_path: "s3://aria-silver/valuation/success/2025/10/05/",
+  dq_failed_file_path: "s3://aria-quarantine/valuation/failed/2025/10/05/",
+  dq_final_status: "FAIL"
+};
+ data.ts
