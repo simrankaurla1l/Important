@@ -1,0 +1,24 @@
+import React from "react";
+ 
+const FailureIcon = ({ size = 105, color = "#DC3545" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 105 105"
+    fill="none"
+  >
+    <path
+      d="M52.5 0C23.25 0 0 23.25 0 52.5C0 81.75 23.25 105 52.5 105C81.75 105 105 81.75 105 52.5C105 23.25 81.75 0 52.5 0ZM52.5 97.5C27.75 97.5 7.5 77.25 7.5 52.5C7.5 27.75 27.75 7.5 52.5 7.5C77.25 7.5 97.5 27.75 97.5 52.5C97.5 77.25 77.25 97.5 52.5 97.5Z"
+      fill={color}
+    />
+    <g transform="translate(26 26)">
+      <path
+        d="M46.5 52.5L26.25 32.25L6 52.5L0 46.5L20.25 26.25L0 6L6 0L26.25 20.25L46.5 0L52.5 6L32.25 26.25L52.5 46.5L46.5 52.5Z"
+        fill={color}
+      />
+    </g>
+  </svg>
+);
+ 
+export default FailureIcon;
